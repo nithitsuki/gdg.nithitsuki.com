@@ -1,11 +1,15 @@
-// Assuming this file is located at something like `src/components/SignUpForm.tsx`
+// src/components/SignUpForm.tsx
 'use client'
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client" // Your Supabase client helper
+import Link from "next/link"
 
-import { cn } from "@/lib/utils"
+// --- 1. ZOD & REACT-HOOK-FORM IMPORTS ---
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+// --- 2. SHADCN/UI & ICONS ---
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -14,56 +18,83 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Link from "next/link"
+import { Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react"
+
+// --- 3. SUPABASE CLIENT ---
+import { createClient } from "@/lib/supabase/client"
+import { cn } from "@/lib/utils"
+
+// --- 4. ZOD SCHEMA DEFINITION (UPDATED) ---
+const formSchema = z.object({
+  displayName: z.string().min(2, {
+    message: "Full name must be at least 2 characters.",
+  }),
+  // --- ADDED USERNAME VALIDATION ---
+  username: z.string()
+    .min(3, { message: "Username must be at least 3 characters." })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "Username can only contain letters, numbers, and underscores." }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+})
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  // State for inputs, errors, and messages
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
-  const router = useRouter()
+  // --- 5. STATE MANAGEMENT (UNCHANGED) ---
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const supabase = createClient()
 
-  // Handler for email/password sign-up
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError(null)
-    setMessage(null)
+  // --- 6. REACT-HOOK-FORM INITIALIZATION (UPDATED) ---
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      displayName: "",
+      username: "", // --- ADDED USERNAME DEFAULT ---
+      email: "",
+      password: "",
+    },
+  })
+
+  // --- 7. SUBMIT HANDLER (UPDATED) ---
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true)
+    setServerError(null)
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
-    if (error) {
-      setError(error.message)
-    } else {
-      // On success, Supabase sends a confirmation email.
-      // Inform the user to check their inbox.
-      setMessage('Registration successful! Please check your email to confirm your account.')
-      // Optional: redirect after a delay
-      // setTimeout(() => router.push('/sign-in'), 5000)
-    }
-  }
-
-  // Handler for Google sign-up (identical to sign-in)
-  const handleSignInWithGoogle = async () => {
-    setError(null)
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      email: values.email,
+      password: values.password,
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        data: {
+          // --- PASS BOTH USERNAME AND FULL_NAME ---
+          full_name: values.displayName,
+          username: values.username,
+        },
       },
     })
+
     if (error) {
-      setError(error.message)
+      setServerError(error.message)
+    } else {
+      setSuccessMessage("Registration successful! Please check your email to confirm your account.")
     }
+    setIsLoading(false)
   }
 
   return (
@@ -72,61 +103,103 @@ export function SignUpForm({
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>
-            Enter your email below to create your account
+            Enter your details below to create your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* If there's a success message, show it and hide the form */}
-          {message ? (
-            <div className="text-center text-green-600">
-              <p>{message}</p>
+          {successMessage ? (
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <CheckCircle2 className="h-16 w-16 text-green-500" />
+              <h3 className="text-xl font-semibold">Check Your Inbox!</h3>
+              <p className="text-muted-foreground">{successMessage}</p>
+              <Link href="/sign-in">
+                <Button>Back to Sign In</Button>
+              </Link>
             </div>
           ) : (
-            <form onSubmit={handleSignUp}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    // Add a pattern for minimum password length for better UX
-                    pattern=".{6,}"
-                    title="Password must be at least 6 characters long."
-                  />
-                </div>
-                {error && (
-                  <p className="mt-2 text-sm text-red-600">{error}</p>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="displayName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* --- 8. ADDED USERNAME FORM FIELD --- */}
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="johndoe99" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="m@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {serverError && (
+                  <p className="text-sm font-medium text-destructive">{serverError}</p>
                 )}
-                <div className="flex flex-col gap-3">
-                  <Button type="submit" className="w-full">
-                    Create Account
-                  </Button>
-                  <Button variant="outline" className="w-full" type="button" onClick={handleSignInWithGoogle}>
-                    Sign up with Google
-                  </Button>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Create Account
+                </Button>
+                <div className="mt-4 text-center text-sm">
+                  Already have an account?{" "}
+                  <Link href="/sign-in" className="underline">
+                    Sign in
+                  </Link>
                 </div>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link href="/sign-in" className="underline underline-offset-4">
-                  Sign in
-                </Link>
-              </div>
-            </form>
+              </form>
+            </Form>
           )}
         </CardContent>
       </Card>
