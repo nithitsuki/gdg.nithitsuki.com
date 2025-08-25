@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm your GDG Mini Blog account</title>
+    <style>
+        body { 
+            font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f0fe 100%); 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 24px rgba(60, 64, 67, 0.15); 
+            overflow: hidden; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); 
+            padding: 40px; 
+            text-align: center; 
+        }
+        .logo { 
+            width: 80px; 
+            height: 80px; 
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); 
+            border-radius: 50%; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 24px; 
+            box-shadow: 0 8px 24px rgba(66, 133, 244, 0.3); 
+        }
+        .content { padding: 40px; }
+        .btn { 
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); 
+            color: white; 
+            text-decoration: none; 
+            padding: 16px 32px; 
+            border-radius: 50px; 
+            font-weight: 500; 
+            display: inline-block; 
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3); 
+        }
+        .btn:hover { 
+            background: linear-gradient(135deg, #1a73e8 0%, #137333 100%); 
+        }
+        .footer { 
+            padding: 40px 20px; 
+            text-align: center; 
+            color: #5f6368; 
+            font-size: 12px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">👥</div>
+            <h1 style="margin: 0 0 16px; font-size: 32px; font-weight: 700; color: #202124;">Welcome to our community!</h1>
+            <p style="margin: 0; font-size: 18px; color: #5f6368; line-height: 1.5;">You're just one step away from joining thousands of developers sharing knowledge and building the future together.</p>
+        </div>
+        
+        <div class="content">
+            <h2 style="margin: 0 0 24px; font-size: 24px; font-weight: 600; color: #202124;">Confirm your account</h2>
+            
+            <p style="margin: 0 0 32px; font-size: 16px; color: #5f6368; line-height: 1.6;">
+                Click the button below to verify your email address and activate your GDG Mini Blog account. This helps us ensure the security of your account and our community.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+                <a href="{{ .ConfirmationURL }}" class="btn">✨ Confirm Your Account</a>
+            </div>
+            
+            <div style="margin: 32px 0; padding: 20px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #4285f4;">
+                <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #202124;">Button not working?</p>
+                <p style="margin: 0; font-size: 14px; color: #5f6368;">Copy and paste this link into your browser:</p>
+                <p style="margin: 8px 0 0; font-size: 14px; word-break: break-all; color: #4285f4; font-family: monospace;">{{ .ConfirmationURL }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>🚀 <strong>GDG Mini Blog</strong> - Empowering developers to share knowledge</p>
+        <p>This email was sent because you created an account on GDG Mini Blog. If you didn't create this account, please ignore this email.</p>
+    </div>
+</body>
+</html>
