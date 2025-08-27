@@ -27,8 +27,7 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 - Live deployed link (GitHub Pages, Netlify, Vercel, or any hosting)\
   **NOW LIVE AT [https://blog.gdg.nithitsuki.com/](https://blog.gdg.nithitsuki.com/)!!!**
 - GitHub repository with code and README (including setup guide)\
-  Well, you're already here, so good job!\
-  (setup guide is in [gdg-mini-blog/README.md](gdg-mini-blog/README.md))
+  You're looking at it! The setup guide is in [`gdg-mini-blog/README.md`](gdg-mini-blog/README.md).
 - At least minimal frontend styling (not plain HTML text)\
   rip google minimalism 😢
 
@@ -49,7 +48,9 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 **Expected Deliverables (DevOps):**
 
 - Source code
+  In the [`meme_generator` folder](./meme_generator/)
 - Dockerfile
+  You'll find it in the [root directory](./Dockerfile).
 - Deployment configs (GitHub Actions / GitLab CI)\
   Right [this way](.github/workflows/meme-pipeline.yml)!
 - Proof of deployment (public link or short demo video)\
@@ -63,10 +64,12 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 3. Solve them and document your process
 4. If the challenge involves vulnerable code, provide a fixed version of the snippet
 
-In light of **Taking up insane amount of work when I know I shouldn't**. I have unfortunately not had the time to compile 5 write-ups for the quetions I've solved (Yup, I've solved medium qns before!).
+So... about this one 😐🙏 turns out I bit more than I could chew as usual 😭
 
-Knowing that this situation is kindaa relatable for some of you guys as well (*\*cough\** madhumitha *\*cough\** ), I hope that you all can spare me a bit in this regard.
+I unfortunately didn't get time to compile 5 write-ups for this submission.\
+Work these days do be killing man (I'm sure _someone **(possibly someoe)**_ can relate )
 
-Link to my PicoCTF account: [play.picoctf.org/users/Nithitsuki](https://play.picoctf.org/users/Nithitsuki)
+For now, here are the questions I've solved on my PicoCTF account:
+[play.picoctf.org/users/Nithitsuki](https://play.picoctf.org/users/Nithitsuki)
 
-If it helps, I also bi0s sometimes
+If it helps, I also bi0s sometimes.
