@@ -30,7 +30,7 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
   Well, you're already here, so good job!\
   (setup guide is in [gdg-mini-blog/README.md](gdg-mini-blog/README.md))
 - At least minimal frontend styling (not plain HTML text)\
-  minimalism rip 😢
+  rip google minimalism 😢
 
 ---
 
@@ -50,9 +50,10 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 
 - Source code
 - Dockerfile
-- Deployment configs (GitHub Actions / GitLab CI)
-- Proof of deployment (public link or short demo video)
-
+- Deployment configs (GitHub Actions / GitLab CI)\
+  Right [this way](.github/workflows/meme-pipeline.yml)!
+- Proof of deployment (public link or short demo video)\
+  **NOW LIVE AT [https://meme.gdg.nithitsuki.com/](https://meme.gdg.nithitsuki.com/)!!!**
 ---
 
 #### Option B – Cybersecurity: Capture the Flag (CTF)
@@ -62,8 +63,10 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 3. Solve them and document your process
 4. If the challenge involves vulnerable code, provide a fixed version of the snippet
 
-**Expected Deliverables (Cybersecurity):**
+In light of **Taking up insane amount of work when I know I shouldn't**. I have unfortunately not had the time to compile 5 write-ups for the quetions I've solved (Yup, I've solved medium qns before!).
 
-- List of solved challenges with brief explanation of approach
-- Screenshots of successful flags
-- Fixed code snippet(s) if applicable
+Knowing that this situation is kindaa relatable for some of you guys as well (*\*cough\** madhumitha *\*cough\** ), I hope that you all can spare me a bit in this regard.
+
+Link to my PicoCTF account: [play.picoctf.org/users/Nithitsuki](https://play.picoctf.org/users/Nithitsuki)
+
+If it helps, I also bi0s sometimes

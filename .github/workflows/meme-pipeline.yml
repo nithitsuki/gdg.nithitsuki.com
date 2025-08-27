@@ -9,7 +9,6 @@ on:
       - 'meme_generator/meme_input.json'
 
 permissions:
-  # We now need write permissions for contents to push a commit
   contents: write
 
 jobs:
@@ -19,25 +18,23 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        # Provide a token to allow committing back to the repo
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install Python dependencies
-        run: pip install -r meme_generator/requirements.txt
-
-      - name: Generate Meme via Imgflip API
+      # --- MODIFIED STEP ---
+      # The Python setup is no longer needed. We now build and run a Docker container.
+      - name: Build and Run Meme Generator in Docker
         id: generate_meme
-        env:
-          IMGFLIP_USERNAME: ${{ secrets.IMGFLIP_USERNAME }}
-          IMGFLIP_PASSWORD: ${{ secrets.IMGFLIP_PASSWORD }}
         run: |
-          echo "MEME_OUTPUT=$(python meme_generator/generate_meme.py)" >> $GITHUB_OUTPUT
+          # Build the Docker image from our Dockerfile
+          docker build -t meme-factory .
+
+          # Run the container, passing the secrets as environment variables
+          # The output of the script (the JSON) is captured here
+          echo "MEME_OUTPUT=$(docker run \
+            -e IMGFLIP_USERNAME=${{ secrets.IMGFLIP_USERNAME }} \
+            -e IMGFLIP_PASSWORD=${{ secrets.IMGFLIP_PASSWORD }} \
+            meme-factory)" >> $GITHUB_OUTPUT
 
       - name: Update Meme History
         run: |
@@ -71,14 +68,11 @@ jobs:
             ] + .' meme_history.json > temp_history.json && mv temp_history.json meme_history.json
           echo "meme_history.json updated successfully."
 
-      # --- NEW ROBUSTNESS STEP ---
-      # Commit the updated history file back to the main branch.
       - name: Commit updated meme_history.json
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add meme_history.json
-          # Check if there are changes to commit to avoid errors
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
