@@ -44,8 +44,6 @@ jobs:
           COMMIT_AUTHOR="${{ github.actor }}"
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           MEME_URLS='${{ steps.generate_meme.outputs.MEME_OUTPUT }}'
-          # --- CHANGE ---
-          # The cat command now points to the correct file location.
           INPUT_DATA=$(cat meme_generator/meme_input.json)
           jq \
             --argjson urls "$MEME_URLS" \
@@ -68,15 +66,17 @@ jobs:
             ] + .' meme_history.json > temp_history.json && mv temp_history.json meme_history.json
           echo "meme_history.json updated successfully."
 
+      # --- CORRECTED STEP ---
+      # The paths now correctly point to where your files are located.
       - name: Prepare Deployment Artifacts
         run: |
           mkdir deploy
-          cp index.html deploy/
-          cp script.js deploy/
+          cp meme_generator/index.html deploy/
+          cp meme_generator/script.js deploy/
           cp meme_history.json deploy/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy3
+          publish_dir: ./deploy
