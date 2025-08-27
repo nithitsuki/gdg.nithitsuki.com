@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/Header'
+import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 const inter = Inter({
@@ -29,8 +29,8 @@ export default function RootLayout({
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
       </head>
       <body className={`${inter.variable} antialiased min-h-screen flex flex-col`}>
-        <Header />
-        <main className="flex-1 pt-14">{children}</main>
+        <Navbar />
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

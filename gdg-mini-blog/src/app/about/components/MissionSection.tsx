@@ -44,7 +44,7 @@ export default function MissionSection() {
             </Card>
             <Card className="text-center p-4 hover:shadow-lg transition-shadow">
               <Heart className="h-8 w-8 text-primary mx-auto mb-3" />
-              <div className="text-2xl font-bold mb-1">∞</div>
+              <div className="text-3xl font-bold mb-1">∞</div>
               <div className="text-xs text-muted-foreground font-medium">Passion</div>
             </Card>
           </div>

@@ -6,13 +6,13 @@ import { ArrowRight, Code, ChevronDown } from 'lucide-react'
 
 export default function HeroSection() {
   const scrollToFeatures = () => {
-    document.getElementById('features-section')?.scrollIntoView({ 
+    document.getElementById('features-section')?.scrollIntoView({
       behavior: 'smooth' 
     })
   }
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 relative overflow-hidden pt-14" style={{ scrollSnapAlign: 'start' }}>
+    <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 relative overflow-hidden" style={{ scrollSnapAlign: 'start' }}>
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-green-500/5"></div>
       
