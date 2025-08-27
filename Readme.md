@@ -24,9 +24,13 @@ This repository contains my submissions for the GDG on Campus selection at Amrit
 
 **Expected Deliverables:**
 
-- Live deployed link (GitHub Pages, Netlify, Vercel, or any hosting)
-- GitHub repository with code and README (including setup guide)
-- At least minimal frontend styling (not plain HTML text)
+- Live deployed link (GitHub Pages, Netlify, Vercel, or any hosting)\
+  **NOW LIVE AT [https://blog.gdg.nithitsuki.com/](https://blog.gdg.nithitsuki.com/)!!!**
+- GitHub repository with code and README (including setup guide)\
+  Well, you're already here, so good job!\
+  (setup guide is in [gdg-mini-blog/README.md](gdg-mini-blog/README.md))
+- At least minimal frontend styling (not plain HTML text)\
+  minimalism rip 😢
 
 ---
 

@@ -1,0 +1,82 @@
+name: Meme Factory CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'meme_generator/meme_input.json'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: pip install -r meme_generator/requirements.txt
+
+      - name: Generate Meme via Imgflip API
+        id: generate_meme
+        env:
+          IMGFLIP_USERNAME: ${{ secrets.IMGFLIP_USERNAME }}
+          IMGFLIP_PASSWORD: ${{ secrets.IMGFLIP_PASSWORD }}
+        run: |
+          echo "MEME_OUTPUT=$(python meme_generator/generate_meme.py)" >> $GITHUB_OUTPUT
+
+      - name: Update Meme History
+        run: |
+          if [ ! -f meme_history.json ]; then
+            echo "[]" > meme_history.json
+          fi
+          COMMIT_SHA="${{ github.sha }}"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          COMMIT_AUTHOR="${{ github.actor }}"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          MEME_URLS='${{ steps.generate_meme.outputs.MEME_OUTPUT }}'
+          # --- CHANGE ---
+          # The cat command now points to the correct file location.
+          INPUT_DATA=$(cat meme_generator/meme_input.json)
+          jq \
+            --argjson urls "$MEME_URLS" \
+            --argjson input "$INPUT_DATA" \
+            --arg sha "$COMMIT_SHA" \
+            --arg msg "$COMMIT_MSG" \
+            --arg author "$COMMIT_AUTHOR" \
+            --arg ts "$TIMESTAMP" \
+            '[
+              {
+                "commitId": $sha,
+                "commitMessage": $msg,
+                "author": $author,
+                "timestamp": $ts,
+                "templateId": $input.templateId,
+                "caption": { "text0": $input.text0, "text1": $input.text1 },
+                "imageUrl": $urls.imageUrl,
+                "pageUrl": $urls.pageUrl
+              }
+            ] + .' meme_history.json > temp_history.json && mv temp_history.json meme_history.json
+          echo "meme_history.json updated successfully."
+
+      - name: Prepare Deployment Artifacts
+        run: |
+          mkdir deploy
+          cp index.html deploy/
+          cp script.js deploy/
+          cp meme_history.json deploy/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy3

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Factory Dashboard</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple scrollbar styling for a more modern look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 font-sans antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white">Meme Factory Dashboard</h1>
+            <p class="text-gray-400 mt-2">The latest memes, deployed automatically.</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Meme Display Section (takes 2/3 of the width on large screens) -->
+            <section id="meme-display" class="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-lg">
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center py-16">
+                    <p class="text-xl text-gray-400">Fetching latest meme...</p>
+                </div>
+
+                <!-- Content (hidden until data is loaded) -->
+                <div id="meme-content" class="hidden">
+                    <img id="meme-image" src="" alt="Generated Meme" class="w-full h-auto object-contain rounded-md border-2 border-gray-700 mb-6 max-h-[60vh]">
+                    
+                    <div class="space-y-3 text-sm md:text-base">
+                        <h2 id="meme-caption" class="text-2xl font-semibold text-white mb-4"></h2>
+                        <div class="flex justify-between items-center bg-gray-900 p-3 rounded-md">
+                            <span class="font-bold text-gray-400">Author:</span>
+                            <span id="commit-author" class="font-mono text-indigo-400"></span>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-900 p-3 rounded-md">
+                            <span class="font-bold text-gray-400">Commit:</span>
+                            <span id="commit-id" class="font-mono text-indigo-400"></span>
+                        </div>
+                        <div class="bg-gray-900 p-3 rounded-md">
+                            <p class="font-bold text-gray-400 mb-1">Message:</p>
+                            <p id="commit-message" class="font-mono text-gray-300"></p>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-900 p-3 rounded-md">
+                            <span class="font-bold text-gray-400">Template ID:</span>
+                            <span id="template-id" class="font-mono text-indigo-400"></span>
+                        </div>
+                        <a id="imgflip-link" href="#" target="_blank" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-md transition-colors duration-200 mt-4">
+                            View on Imgflip
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Meme History Section (takes 1/3 of the width on large screens) -->
+            <aside class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-white border-b-2 border-gray-700 pb-3 mb-4">History</h2>
+                <ul id="history-list" class="space-y-2 max-h-[80vh] overflow-y-auto">
+                    <!-- History items will be injected here by JavaScript -->
+                    <li id="history-loading-state" class="text-gray-400">Loading history...</li>
+                </ul>
+            </aside>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
