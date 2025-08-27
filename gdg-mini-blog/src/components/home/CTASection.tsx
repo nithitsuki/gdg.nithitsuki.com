@@ -53,21 +53,6 @@ export default function CTASection() {
             </Button>
           </Link>
         </div>
-        
-        {/* Trust Indicators */}
-        <div className="mt-14 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4">
-            Trusted by developers from
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-400">
-            <span>🏢 Google</span>
-            <span>🏢 Microsoft</span>
-            <span>🏢 Meta</span>
-            <span>🏢 Amazon</span>
-            <span>🏢 Netflix</span>
-            <span>🏢 Uber</span>
-          </div>
-        </div>
       </div>
     </section>
   )

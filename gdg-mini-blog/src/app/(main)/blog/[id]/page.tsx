@@ -16,7 +16,7 @@ function formatReadTime(content: string): string {
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
-
+  params = await params;
   const { data: post, error } = await supabase
     .from('posts')
     .select('*')

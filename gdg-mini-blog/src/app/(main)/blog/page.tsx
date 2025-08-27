@@ -8,6 +8,7 @@ import {
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, BookOpen, Calendar, Clock, User } from 'lucide-react'
+import { BlogPostsClient } from './BlogPostsClient'
 
 export const revalidate = 60
 
@@ -26,14 +27,12 @@ function getExcerpt(content: string, maxLength: number = 150): string {
 }
 
 export default async function BlogPage() {
-  // --- CHANGE 1: Removed 'await' ---
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch posts with author profiles
-  const { data: posts, error } = await supabase
+  // Fetch initial 2 posts with author profiles
+  const { data: initialPosts, error } = await supabase
     .from('posts')
-    // --- THIS IS THE ONLY LINE THAT NEEDS TO BE FIXED ---
     .select(`
       *,
       profiles (
@@ -42,6 +41,13 @@ export default async function BlogPage() {
       )
     `)
     .order('created_at', { ascending: false })
+    .range(0, 1) // Get first 2 posts (0-indexed)
+
+  // Get total count for pagination
+  const { count: totalCount } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+
   if (error) {
     return (
       <div className="container max-w-screen-2xl px-4 py-8">
@@ -54,7 +60,7 @@ export default async function BlogPage() {
     )
   }
 
-  if (!posts || posts.length === 0) {
+  if (!initialPosts || initialPosts.length === 0) {
     return (
       <div className="container max-w-screen-2xl px-4 py-16">
         <div className="flex flex-col items-center text-center space-y-6">
@@ -106,94 +112,11 @@ export default async function BlogPage() {
         </div>
       </div>
 
-      {/* Posts Section */}
-      <div className="container max-w-4xl mx-auto px-4 py-12">
-        <div className="space-y-8">
-          {posts.map((post, index) => {
-            // --- This logic will now work correctly ---
-            const author = post.profiles
-            const authorName = author?.full_name || author?.username || 'Anonymous'
-            const isFeaturePost = index === 0 // Make first post larger
-            
-            return (
-              <article 
-                key={post.id} 
-                className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden ${
-                  isFeaturePost ? 'border-l-4 border-blue-500' : ''
-                }`}
-              >
-                <Link href={`/blog/${post.id}`} className="block">
-                  <div className={`p-8 ${isFeaturePost ? 'pb-6' : 'pb-6'}`}>
-                    {/* Author & Meta Info */}
-                    <div className="flex items-center space-x-4 mb-6">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 text-sm">
-                          <span className="font-medium text-gray-900 truncate">
-                            {authorName}
-                          </span>
-                          <span className="text-gray-400">•</span>
-                          <div className="flex items-center space-x-1 text-gray-600">
-                            <Calendar className="h-4 w-4" />
-                            <span>
-                              {new Date(post.created_at).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              })}
-                            </span>
-                          </div>
-                          <span className="text-gray-400">•</span>
-                          <div className="flex items-center space-x-1 text-gray-600">
-                            <Clock className="h-4 w-4" />
-                            <span>{formatReadTime(post.content)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <h2 className={`font-bold text-gray-900 leading-tight mb-4 hover:text-blue-600 transition-colors ${
-                      isFeaturePost ? 'text-3xl md:text-4xl' : 'text-xl md:text-2xl'
-                    }`}>
-                      {post.title}
-                    </h2>
-
-                    {/* Excerpt */}
-                    <p className={`text-gray-600 leading-relaxed ${
-                      isFeaturePost ? 'text-lg mb-6' : 'text-base mb-4'
-                    }`}>
-                      {getExcerpt(post.content, isFeaturePost ? 200 : 150)}
-                    </p>
-
-                    {/* Tags or Read More */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                          Technology
-                        </span>
-                      </div>
-                      <span className="text-blue-600 font-medium text-sm hover:text-blue-800 transition-colors">
-                        Read more →
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </article>
-            )
-          })}
-        </div>
-
-        {/* Load More Section */}
-        <div className="text-center mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-600 mb-4">Want to see more stories?</p>
-          <Button variant="outline" size="lg" className="cursor-pointer">
-            Load More Posts
-          </Button>
-        </div>
-      </div>
+      {/* Posts Section with Client Component for Pagination */}
+      <BlogPostsClient 
+        initialPosts={initialPosts} 
+        totalCount={totalCount || 0}
+      />
     </div>
   )
 }

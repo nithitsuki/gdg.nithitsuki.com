@@ -30,8 +30,8 @@ export default async function Navbar() {
   const navItems = [
     { href: "/", label: "Home", icon: Home },
     { href: "/blog", label: "Blogs", icon: BookOpen },
-    { href: "/about", label: "About", icon: Info },
     ...(user ? [{ href: "/new-post", label: "Write", icon: PlusCircle }] : []),
+    ...(!user ? [{ href: "/about", label: "About", icon: Info }] : []),
   ];
 
   return (
