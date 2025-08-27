@@ -1,8 +1,7 @@
 name: Meme Factory CI/CD
 
 on:
-  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
-  
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,6 +9,7 @@ on:
       - 'meme_generator/meme_input.json'
 
 permissions:
+  # We now need write permissions for contents to push a commit
   contents: write
 
 jobs:
@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        # Provide a token to allow committing back to the repo
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -68,8 +71,21 @@ jobs:
             ] + .' meme_history.json > temp_history.json && mv temp_history.json meme_history.json
           echo "meme_history.json updated successfully."
 
-      # --- CORRECTED STEP ---
-      # The paths now correctly point to where your files are located.
+      # --- NEW ROBUSTNESS STEP ---
+      # Commit the updated history file back to the main branch.
+      - name: Commit updated meme_history.json
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add meme_history.json
+          # Check if there are changes to commit to avoid errors
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "docs: Update meme history [skip ci]"
+            git push
+          fi
+
       - name: Prepare Deployment Artifacts
         run: |
           mkdir deploy
